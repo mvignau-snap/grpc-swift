@@ -32,7 +32,9 @@ open class ClientNetworkMonitor {
   private let reachability: SCNetworkReachability
 
   /// Instance of network info being used for obtaining cellular technology names.
+  #if !targetEnvironment(macCatalyst)
   public let cellularInfo = CTTelephonyNetworkInfo()
+  #endif
   /// Whether the network is currently reachable. Backed by `SCNetworkReachability`.
   public private(set) var isReachable: Bool?
   /// Whether the device is currently using wifi (versus cellular).
@@ -92,6 +94,7 @@ open class ClientNetworkMonitor {
 
   // MARK: - Cellular
 
+  #if !targetEnvironment(macCatalyst)
   private func startMonitoringCellular() {
     let notificationName: Notification.Name
     if #available(iOS 12.0, *), self.useNewCellMonitor {
@@ -122,6 +125,9 @@ open class ClientNetworkMonitor {
       }
     }
   }
+  #else
+  private func startMonitoringCellular() {}
+  #endif
 
   // MARK: - Reachability
 
